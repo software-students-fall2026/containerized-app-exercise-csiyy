@@ -1,9 +1,12 @@
+"""Detect dominant colors in images using K-means clustering."""
+
 from PIL import Image
 import numpy as np
 from sklearn.cluster import KMeans
 
 
 def detect_colors(image_path, n_colors=5):
+    """Return dominant HEX colors and their pixel percentages."""
 
     # Load the image and convert it to RGB
     image = Image.open(image_path).convert("RGB")
@@ -18,11 +21,7 @@ def detect_colors(image_path, n_colors=5):
     n_colors = min(n_colors, len(np.unique(pixels, axis=0)))
 
     # Perform K-Means clustering
-    model = KMeans(
-        n_clusters=n_colors,
-        random_state=42,
-        n_init=10
-    )
+    model = KMeans(n_clusters=n_colors, random_state=42, n_init=10)
 
     model.fit(pixels)
 
@@ -30,10 +29,7 @@ def detect_colors(image_path, n_colors=5):
     colors = model.cluster_centers_
 
     # Count pixels in each cluster
-    counts = np.bincount(
-        model.labels_,
-        minlength=n_colors
-    )
+    counts = np.bincount(model.labels_, minlength=n_colors)
 
     results = []
 
@@ -48,15 +44,9 @@ def detect_colors(image_path, n_colors=5):
 
         percentage = count / len(pixels) * 100
 
-        results.append({
-            "hex": hex_code,
-            "percentage": round(percentage, 2)
-        })
+        results.append({"hex": hex_code, "percentage": round(percentage, 2)})
 
     # Sort from most to least dominant
-    results.sort(
-        key=lambda color: color["percentage"],
-        reverse=True
-    )
+    results.sort(key=lambda color: color["percentage"], reverse=True)
 
     return results

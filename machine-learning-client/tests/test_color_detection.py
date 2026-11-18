@@ -1,3 +1,4 @@
+"""Unit tests for the dominant color detection algorithm."""
 
 import pytest
 from PIL import Image
@@ -5,6 +6,7 @@ from color_detection import detect_colors
 
 
 def test_single_color(tmp_path):
+    """Verify detection of an image containing a single color."""
     image = Image.new("RGB", (100, 100), (255, 0, 0))
     path = tmp_path / "red.png"
     image.save(path)
@@ -17,6 +19,7 @@ def test_single_color(tmp_path):
 
 
 def test_two_colors(tmp_path):
+    """Verify color detection and percentage calculation."""
     image = Image.new("RGB", (100, 100), (255, 0, 0))
     image.paste((0, 0, 255), (70, 0, 100, 100))
 
@@ -33,15 +36,10 @@ def test_two_colors(tmp_path):
 
 
 def test_five_colors(tmp_path):
+    """Verify detection of five equally distributed colors."""
     image = Image.new("RGB", (100, 100))
 
-    colors = [
-        (255, 0, 0),
-        (0, 255, 0),
-        (0, 0, 255),
-        (255, 255, 0),
-        (255, 255, 255)
-    ]
+    colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 255, 255)]
 
     for i, color in enumerate(colors):
         image.paste(color, (i * 20, 0, (i + 1) * 20, 100))
@@ -58,5 +56,6 @@ def test_five_colors(tmp_path):
 
 
 def test_invalid_image_path():
+    """Verify that an invalid image path raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError):
         detect_colors("nonexistent.png")
