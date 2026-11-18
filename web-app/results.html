@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Color Dashboard - Results</title>
+    <link rel="stylesheet" href="results.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Color Dashboard</h1>
+
+        <h2>Your Top 5 Colors</h2>
+
+        <p>Here are the five most dominant colors in your photo!</p>
+
+        <!-- Display the five dominant colors -->
+        <div id="color-palette" class="color-palette"></div>
+
+        <!-- Display the color distribution -->
+        <div id="distribution-bar" class="distribution-bar"></div>
+
+        <p id="message" aria-live="polite">
+            Click on a color to copy its HEX code.
+        </p>
+
+        <button id="capture-again">
+            Capture Another Photo
+        </button>
+
+    </div>
+
+    <script src="results.js"></script>
+
+</body>
+
+</html>
