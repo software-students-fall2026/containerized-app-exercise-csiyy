@@ -56,6 +56,16 @@ async function startCamera() {
         }
 
         stream = camera;
+        for (const track of camera.getVideoTracks()) {
+            track.addEventListener("ended", () => {
+                if (stream !== camera) return;
+
+                cameraRequest++;
+                stopCamera();
+                show(photo ? "preview" : "idle", "Camera disconnected. Reconnect it and try again.");
+                (photo ? retakeButton : startButton).focus();
+            }, { once: true });
+        }
         video.srcObject = camera;
         await video.play();
         if (request !== cameraRequest) return;
