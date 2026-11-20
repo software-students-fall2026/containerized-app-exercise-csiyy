@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Color Dashboard - Camera</title>
+    <link rel="stylesheet" href="capture.css">
+    <script src="capture.js" defer></script>
+</head>
+<body>
+    <main class="capture">
+        <h1>Color Dashboard</h1>
+        <h2>Take a photo</h2>
+        <p id="camera-status" role="status">Turn on your camera to take a photo.</p>
+
+        <div class="viewfinder">
+            <video id="camera-preview" aria-label="Live camera preview" autoplay muted playsinline hidden></video>
+            <img id="photo-preview" alt="Your captured photo" hidden>
+        </div>
+
+        <div class="controls">
+            <button id="start-camera" type="button">Enable Camera</button>
+            <button id="take-photo" type="button" hidden>Take Photo</button>
+            <button id="retake-photo" class="secondary" type="button" hidden>Retake</button>
+            <button id="use-photo" type="button" hidden>Use Photo</button>
+        </div>
+    </main>
+</body>
+</html>
