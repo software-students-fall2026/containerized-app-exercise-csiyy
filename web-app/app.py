@@ -12,16 +12,16 @@ def webcam():
     return render_template("capture.html")
 
 
-@app.get("/<any(capture.css,capture.js):filename>")
-def webcam_asset(filename):
-    """Serve webcam CSS and JavaScript files."""
+@app.get("/<any(capture.css,capture.js,waiting.css):filename>")
+def page_asset(filename):
+    """Serve the camera and loading page assets."""
     return send_from_directory(app.template_folder, filename)
 
 
 @app.get("/waiting")
 def waiting():
     """Render the waiting page."""
-    return render_template("waiting.html")
+    return render_template("waiting.html", image_id=request.args.get("image_id", ""))
 
 
 @app.get("/results")

@@ -9,13 +9,13 @@ app = Flask(
 def webcam():
     return render_template("capture.html")
 
-@app.get("/<any(capture.css,capture.js):filename>")
-def webcam_asset(filename):
+@app.get("/<any(capture.css,capture.js,waiting.css):filename>")
+def page_asset(filename):
     return send_from_directory(app.template_folder, filename)
 
 @app.get("/waiting")
 def waiting():
-    return render_template("waiting.html")
+    return render_template("waiting.html", image_id=request.args.get("image_id", ""))
 
 @app.get("/results")
 def results():
