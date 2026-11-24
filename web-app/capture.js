@@ -149,6 +149,8 @@ async function uploadPhoto() {
             bubbles: true,
             detail: { photo, imageId },
         }));
+        const query = new URLSearchParams({ image_id: imageId });
+        window.location.assign(`/waiting?${query}`);
     } catch {
         if (controller.signal.aborted) return;
 
