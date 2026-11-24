@@ -1,3 +1,5 @@
+"""Configure the MongoDB connection and collections."""
+
 import os
 from pymongo import MongoClient
 from dotenv import load_dotenv
