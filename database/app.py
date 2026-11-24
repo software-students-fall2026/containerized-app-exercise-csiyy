@@ -1,13 +1,17 @@
-from flask import Flask, request, jsonify, Response, render_template
+from flask import Flask, request, Response, render_template, send_from_directory
 from photos import (get_photo, save_photo, delete_photo)
 app = Flask(
     __name__, 
-    template_folder='../webapp'
+    template_folder='../web-app'
 )
 
 @app.get("/webcam")
 def webcam():
-    return render_template("webcam.html")
+    return render_template("capture.html")
+
+@app.get("/<any(capture.css,capture.js):filename>")
+def webcam_asset(filename):
+    return send_from_directory(app.template_folder, filename)
 
 @app.get("/waiting")
 def waiting():

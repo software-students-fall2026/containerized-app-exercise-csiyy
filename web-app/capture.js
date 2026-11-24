@@ -10,10 +10,12 @@ let stream = null;
 let photo = null;
 let photoUrl = null;
 let cameraRequest = 0;
+let uploadController = null;
 
 function show(state, message) {
     const showingCamera = state === "live" || state === "capturing";
-    const showingPhoto = state === "preview" || state === "selected";
+    const uploading = state === "uploading";
+    const showingPhoto = state === "preview" || uploading || state === "selected";
 
     status.textContent = message;
     video.hidden = !showingCamera;
@@ -23,7 +25,9 @@ function show(state, message) {
     takeButton.hidden = !showingCamera;
     takeButton.disabled = state !== "live";
     retakeButton.hidden = !showingPhoto;
-    useButton.hidden = state !== "preview";
+    retakeButton.disabled = uploading;
+    useButton.hidden = state !== "preview" && !uploading;
+    useButton.disabled = uploading;
 }
 
 function stopCamera() {
@@ -118,17 +122,52 @@ function takePhoto() {
     }, "image/jpeg", 0.9);
 }
 
+async function uploadPhoto() {
+    if (!photo || uploadController) return;
+
+    const controller = new AbortController();
+    uploadController = controller;
+    const form = new FormData();
+    form.append("photo", photo, "capture.jpg");
+    show("uploading", "Uploading your photo…");
+
+    try {
+        const response = await fetch("/upload", {
+            method: "POST",
+            body: form,
+            signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("Upload failed");
+
+        const { image_id: imageId } = await response.json();
+        if (typeof imageId !== "string" || !imageId) throw new Error("Missing image ID");
+        if (controller.signal.aborted) return;
+
+        show("selected", "Photo uploaded.");
+        retakeButton.focus();
+        preview.dispatchEvent(new CustomEvent("photo-selected", {
+            bubbles: true,
+            detail: { photo, imageId },
+        }));
+    } catch {
+        if (controller.signal.aborted) return;
+
+        show("preview", "Could not upload your photo. Select Use Photo to try again.");
+        useButton.focus();
+    } finally {
+        if (uploadController === controller) uploadController = null;
+    }
+}
+
 startButton.addEventListener("click", startCamera);
 takeButton.addEventListener("click", takePhoto);
 retakeButton.addEventListener("click", startCamera);
-useButton.addEventListener("click", () => {
-    show("selected", "Photo selected.");
-    retakeButton.focus();
-    preview.dispatchEvent(new CustomEvent("photo-selected", { bubbles: true, detail: { photo } }));
-});
+useButton.addEventListener("click", uploadPhoto);
 
 window.addEventListener("pagehide", () => {
     cameraRequest++;
+    uploadController?.abort();
+    uploadController = null;
     stopCamera();
     clearPhoto();
     show("idle", "Turn on your camera to take a photo.");
