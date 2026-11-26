@@ -1,5 +1,7 @@
 """Detect dominant colors in images using K-means clustering."""
 
+from io import BytesIO
+
 from PIL import Image
 import numpy as np
 from sklearn.cluster import KMeans
@@ -9,7 +11,10 @@ def detect_colors(image_path, n_colors=5):
     """Return dominant HEX colors and their pixel percentages."""
 
     # Load the image and convert it to RGB
-    image = Image.open(image_path).convert("RGB")
+    if isinstance(image_path, (bytes, bytearray)):
+        image = Image.open(BytesIO(image_path)).convert("RGB")
+    else:
+        image = Image.open(image_path).convert("RGB")
 
     # Resize the image for faster processing
     image.thumbnail((200, 200))
