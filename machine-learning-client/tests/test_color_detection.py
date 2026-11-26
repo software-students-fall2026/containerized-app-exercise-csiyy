@@ -1,7 +1,9 @@
 """Unit tests for the dominant color detection algorithm."""
 
+from io import BytesIO
+
 import pytest
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from color_detection import detect_colors
 
 
@@ -59,3 +61,24 @@ def test_invalid_image_path():
     """Verify that an invalid image path raises FileNotFoundError."""
     with pytest.raises(FileNotFoundError):
         detect_colors("nonexistent.png")
+
+
+def test_image_bytes():
+    """Verify color detection works with image bytes."""
+    image = Image.new("RGB", (100, 100), (255, 0, 0))
+
+    buffer = BytesIO()
+    image.save(buffer, format="PNG")
+
+    results = detect_colors(buffer.getvalue())
+
+    assert len(results) == 1
+    assert results[0]["hex"] == "#FF0000"
+    assert results[0]["percentage"] == 100.0
+
+
+def test_invalid_image_bytes():
+    """Verify invalid image bytes raise an error."""
+
+    with pytest.raises(UnidentifiedImageError):
+        detect_colors(b"invalid image data")
